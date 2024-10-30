@@ -12,7 +12,7 @@ namespace Hertzole.PowerPools
 		public int Length { get; private set; }
 		public int Capacity
 		{
-			get { return items.Length; }
+			get { return items?.Length ?? 0; }
 		}
 
 		public PooledStack(int capacity = 16)

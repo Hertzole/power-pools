@@ -1,6 +1,7 @@
 ﻿#nullable enable
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Hertzole.PowerPools
 {
@@ -104,6 +105,7 @@ namespace Hertzole.PowerPools
 		/// <summary>
 		///     Disposes the pool and all of its items.
 		/// </summary>
+		[ExcludeFromCodeCoverage] // This method for whatever reason does not want to be included in code coverage, even though it's called in Dispose.
 		protected virtual void Dispose(bool disposing) { }
 	}
 }

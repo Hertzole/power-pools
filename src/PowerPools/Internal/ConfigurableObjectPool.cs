@@ -120,6 +120,7 @@ namespace Hertzole.PowerPools
 			if (disposing)
 			{
 				pool.Dispose();
+				InUse = 0;
 			}
 		}
 	}

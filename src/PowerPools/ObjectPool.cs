@@ -64,7 +64,7 @@ namespace Hertzole.PowerPools
 		/// <returns>A new <see cref="ObjectPool{T}" /> instance.</returns>
 		public static ObjectPool<T> Create()
 		{
-			return new ConfigurableObjectPool<T>();
+			return Create(null!);
 		}
 
 		/// <summary>
@@ -76,17 +76,7 @@ namespace Hertzole.PowerPools
 		/// <returns>A new <see cref="ObjectPool{T}" /> instance.</returns>
 		public static ObjectPool<T> Create(Action<T>? onRent, Action<T>? onReturn)
 		{
-			return new ConfigurableObjectPool<T>(null, onRent, onReturn);
-		}
-
-		/// <summary>
-		///     Creates a new instance of <see cref="ObjectPool{T}" /> with a factory method to create new items.
-		/// </summary>
-		/// <param name="factory">A factory method to create new items.</param>
-		/// <returns>A new <see cref="ObjectPool{T}" /> instance.</returns>
-		public static ObjectPool<T> Create(Func<T> factory)
-		{
-			return new ConfigurableObjectPool<T>(factory);
+			return Create(null!, onRent, onReturn);
 		}
 
 		/// <summary>
@@ -97,7 +87,7 @@ namespace Hertzole.PowerPools
 		/// <param name="onRent">Optional action to run when an item is rented.</param>
 		/// <param name="onReturn">Optional action to run when an item is returned.</param>
 		/// <returns>A new <see cref="ObjectPool{T}" /> instance.</returns>
-		public static ObjectPool<T> Create(Func<T> factory, Action<T>? onRent, Action<T>? onReturn)
+		public static ObjectPool<T> Create(Func<T> factory, Action<T>? onRent = null, Action<T>? onReturn = null)
 		{
 			return new ConfigurableObjectPool<T>(factory, onRent, onReturn);
 		}

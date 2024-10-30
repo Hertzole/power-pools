@@ -60,7 +60,7 @@ namespace Hertzole.PowerPools
 		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
-			if (!disposing)
+			if (disposing)
 			{
 				pool.Dispose();
 			}

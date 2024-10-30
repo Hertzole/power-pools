@@ -115,19 +115,12 @@ namespace Hertzole.PowerPools
 			return factory != null ? factory() : new T();
 		}
 
-		~ConfigurableObjectPool()
-		{
-			Dispose();
-		}
-
 		protected override void Dispose(bool disposing)
 		{
-			if (!disposing)
+			if (disposing)
 			{
-				return;
+				pool.Dispose();
 			}
-
-			pool.Dispose();
 		}
 	}
 }

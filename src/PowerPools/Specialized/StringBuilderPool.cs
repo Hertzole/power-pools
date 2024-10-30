@@ -62,10 +62,8 @@ namespace Hertzole.PowerPools
 		{
 			if (!disposing)
 			{
-				return;
+				pool.Dispose();
 			}
-
-			pool.Dispose();
 		}
 
 		private StringBuilder OnCreate()

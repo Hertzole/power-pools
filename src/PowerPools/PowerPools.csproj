@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <LangVersion>default</LangVersion>
+        <Nullable>disable</Nullable>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <TargetFrameworks>net5.0;net6.0;net7.0;net8.0;netstandard2.1</TargetFrameworks>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <AssemblyName>Hertzole.PowerPools</AssemblyName>
+        <AssemblyVersion>1.0.0</AssemblyVersion>
+        <RootNamespace>Hertzole.PowerPools</RootNamespace>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <PackageId>Hertzole.PowerPools</PackageId>
+        <Title>PowerPools</Title>
+        <Authors>Hertzole</Authors>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <IsTrimmable>true</IsTrimmable>
+        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+        <IsAotCompatible>true</IsAotCompatible>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+    </PropertyGroup>
+
+</Project>

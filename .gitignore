@@ -199,8 +199,6 @@ PublishScripts/
 *.nupkg
 # NuGet Symbol Packages
 *.snupkg
-# The packages folder can be ignored because of Package Restore
-**/[Pp]ackages/*
 # except build/, which is used as an MSBuild target.
 !**/[Pp]ackages/build/
 # Uncomment if necessary however generally it will be regenerated when needed
@@ -400,3 +398,15 @@ FodyWeavers.xsd
 .idea/
 
 # End of https://www.toptal.com/developers/gitignore/api/csharp
+
+# Code coverage
+[Cc]overage/
+coverage.bat
+
+# Unity
+/[Uu]nity/[Ll]ibrary
+/[Uu]nity/[Tt]emp
+/[Uu]nity/[Uu]ser[Ss]ettings
+!/[Uu]nity/[Pp]ackages
+/[Uu]nity/*.csproj
+/[Uu]nity/*.sln

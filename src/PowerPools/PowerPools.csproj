@@ -10,6 +10,10 @@
     <PropertyGroup>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     </PropertyGroup>
+    
+    <ItemGroup>
+        <None Include="../../.editorconfig" Link=".editorconfig" />
+    </ItemGroup>
 
     <PropertyGroup>
         <AssemblyName>Hertzole.PowerPools</AssemblyName>

@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerPools", "src\PowerPools\PowerPools.csproj", "{1DD1176F-DD8A-4AC3-AB3B-1F21AAFBC08A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerPools.Tests", "tests\PowerPools.Tests\PowerPools.Tests.csproj", "{2DE3F83D-F860-48D4-A4CA-46BA11E272A6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{1DD1176F-DD8A-4AC3-AB3B-1F21AAFBC08A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1DD1176F-DD8A-4AC3-AB3B-1F21AAFBC08A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1DD1176F-DD8A-4AC3-AB3B-1F21AAFBC08A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DE3F83D-F860-48D4-A4CA-46BA11E272A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DE3F83D-F860-48D4-A4CA-46BA11E272A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DE3F83D-F860-48D4-A4CA-46BA11E272A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DE3F83D-F860-48D4-A4CA-46BA11E272A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Buffers;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Hertzole.PowerPools
 {
 	internal sealed class PooledStack<T> : IDisposable
 	{
-		private T[] items;
+		internal T[] items;
 
 		public int Length { get; private set; }
 		public int Capacity
@@ -14,8 +15,10 @@ namespace Hertzole.PowerPools
 			get { return items.Length; }
 		}
 
-		public PooledStack(int capacity)
+		public PooledStack(int capacity = 16)
 		{
+			Debug.Assert(capacity > 0, "Capacity must be greater than 0.");
+
 			items = ArrayPool<T>.Shared.Rent(capacity);
 			Length = 0;
 		}
@@ -26,7 +29,7 @@ namespace Hertzole.PowerPools
 
 			if ((uint) size >= (uint) items.Length)
 			{
-				Grow(size + 1);
+				Grow();
 			}
 
 			items[size] = item;
@@ -52,19 +55,9 @@ namespace Hertzole.PowerPools
 			return true;
 		}
 
-		private void Grow(int capacity)
+		private void Grow()
 		{
-			int newCapacity = items.Length == 0 ? 16 : items.Length * 2;
-
-			if ((uint) newCapacity > int.MaxValue)
-			{
-				newCapacity = int.MaxValue;
-			}
-
-			if (newCapacity < capacity)
-			{
-				newCapacity = capacity;
-			}
+			int newCapacity = items.Length * 2;
 
 			if (newCapacity != items.Length)
 			{

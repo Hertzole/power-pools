@@ -33,11 +33,13 @@ namespace Hertzole.PowerPools
 			get { return pool.InUse; }
 		}
 
-		private StringBuilderPool(int defaultCapacity = 256)
+		private StringBuilderPool(int defaultCapacity = DEFAULT_CAPACITY)
 		{
 			this.defaultCapacity = defaultCapacity;
 			pool = Create(OnCreate, null, OnReturn);
 		}
+
+		internal const int DEFAULT_CAPACITY = 256;
 
 		/// <inheritdoc />
 		public override StringBuilder Rent()
@@ -73,7 +75,7 @@ namespace Hertzole.PowerPools
 
 		private static StringBuilder OnCreateStatic()
 		{
-			return new StringBuilder(256);
+			return new StringBuilder(DEFAULT_CAPACITY);
 		}
 
 		private static void OnReturn(StringBuilder item)

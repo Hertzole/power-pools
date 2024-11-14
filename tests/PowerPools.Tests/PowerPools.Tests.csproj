@@ -1,14 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
+        <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>enable</Nullable>
 
+        <LangVersion>default</LangVersion>
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
         <AssemblyName>Hertzole.PowerPools.Tests</AssemblyName>
         <RootNamespace>Hertzole.PowerPools.Tests</RootNamespace>
+        <TargetFrameworks>net8.0;net5.0;net6.0;net7.0;net9.0</TargetFrameworks>
     </PropertyGroup>
 
     <ItemGroup>

@@ -1,4 +1,5 @@
-﻿using Hertzole.PowerPools;
+﻿using System;
+using Hertzole.PowerPools;
 
 namespace PowerPools.Tests
 {

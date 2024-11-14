@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Buffers;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 
 namespace Hertzole.PowerPools
 {
-	internal sealed class PooledStack<T> : IDisposable
+	internal sealed class PooledStack<T> : IDisposable where T : class
 	{
 		internal T[] items;
 
@@ -47,10 +46,8 @@ namespace Hertzole.PowerPools
 			int size = Length - 1;
 			result = items[size];
 			Length = size;
-			if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
-			{
-				items[size] = default;
-			}
+			// No need to check only if this item is a reference/unmanaged type since we'll always be using references.
+			items[size] = default;
 
 			return true;
 		}

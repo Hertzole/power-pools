@@ -4,7 +4,7 @@ using Hertzole.PowerPools;
 namespace PowerPools.Tests
 {
 	[TestFixture]
-	public class StringBuilderPoolTests : ObjectPoolTests<StringBuilderPool, StringBuilder>
+	public class StringBuilderPoolTests : BaseObjectPoolWithSharedTests<StringBuilderPool, StringBuilder>
 	{
 		protected override StringBuilderPool CreatePool()
 		{

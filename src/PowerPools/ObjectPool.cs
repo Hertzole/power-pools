@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Hertzole.PowerPools
 {
 	/// <summary>
-	///     Provides a resource pool that enabled reusing instances of the given type.
+	///     Provides a resource pool that enables reusing instances of the given type.
 	/// </summary>
 	/// <remarks>This class is thread-safe. All members may be used by multiple threads concurrently.</remarks>
 	/// <typeparam name="T">The type of object to pool.</typeparam>
@@ -60,37 +60,22 @@ namespace Hertzole.PowerPools
 		public abstract int PreWarm(int count);
 
 		/// <summary>
-		///     Creates a new instance of <see cref="ObjectPool{T}" /> using the default options.
-		/// </summary>
-		/// <returns>A new <see cref="ObjectPool{T}" /> instance.</returns>
-		public static ObjectPool<T> Create()
-		{
-			return Create(null!);
-		}
-
-		/// <summary>
-		///     Creates a new instance of <see cref="ObjectPool{T}" /> with an optional action to run when an item is rented and
-		///     returned.
-		/// </summary>
-		/// <param name="onRent">Optional action to run when an item is rented.</param>
-		/// <param name="onReturn">Optional action to run when an item is returned.</param>
-		/// <returns>A new <see cref="ObjectPool{T}" /> instance.</returns>
-		public static ObjectPool<T> Create(Action<T>? onRent, Action<T>? onReturn)
-		{
-			return Create(null!, onRent, onReturn);
-		}
-
-		/// <summary>
 		///     Creates a new instance of <see cref="ObjectPool{T}" /> with a factory method to create new items and optional
 		///     actions to run when an item is rented and returned.
 		/// </summary>
-		/// <param name="factory">A factory method to create new items.</param>
+		/// <param name="factory">Optional factory method to create new items.</param>
 		/// <param name="onRent">Optional action to run when an item is rented.</param>
 		/// <param name="onReturn">Optional action to run when an item is returned.</param>
 		/// <returns>A new <see cref="ObjectPool{T}" /> instance.</returns>
-		public static ObjectPool<T> Create(Func<T> factory, Action<T>? onRent = null, Action<T>? onReturn = null)
+		public static ObjectPool<T> Create(Func<T>? factory = null, Action<T>? onRent = null, Action<T>? onReturn = null)
 		{
-			return new ConfigurableObjectPool<T>(factory, onRent, onReturn);
+			return new ConfigurableObjectPool<T>(16, factory, onRent, onReturn);
+		}
+
+		/// <inheritdoc cref="FixedSizeObjectPool{T}.Create(int, Func{T}?, Action{T}?, Action{T}?)" />
+		public static FixedSizeObjectPool<T> CreateFixedSize(int capacity, Func<T>? factory = null, Action<T>? onRent = null, Action<T>? onReturn = null)
+		{
+			return FixedSizeObjectPool<T>.Create(capacity, factory, onRent, onReturn);
 		}
 
 		/// <summary>

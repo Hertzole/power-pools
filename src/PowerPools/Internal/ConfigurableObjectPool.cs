@@ -1,21 +1,19 @@
 ﻿#nullable enable
 
-using System;
 #if NET9_0_OR_GREATER
-using System.Threading;
+using Lock = System.Threading.Lock;
+#else
+using Lock = object;
 #endif
+using System;
 
 namespace Hertzole.PowerPools
 {
 	internal class ConfigurableObjectPool<T> : ObjectPool<T> where T : class, new()
 	{
-#if NET9_0_OR_GREATER
 		private readonly Lock lockObject = new Lock();
-#else
-		private readonly object lockObject = new object();
-#endif
 
-		private readonly PooledStack<T> pool = new PooledStack<T>();
+		private readonly PooledStack<T> pool;
 		private readonly Func<T>? factory;
 		private readonly Action<T>? onRent;
 		private readonly Action<T>? onReturn;
@@ -41,8 +39,9 @@ namespace Hertzole.PowerPools
 			}
 		}
 
-		public ConfigurableObjectPool(Func<T>? factory = null, Action<T>? onRent = null, Action<T>? onReturn = null)
+		public ConfigurableObjectPool(int initialCapacity = 16, Func<T>? factory = null, Action<T>? onRent = null, Action<T>? onReturn = null)
 		{
+			pool = new PooledStack<T>(initialCapacity);
 			this.factory = factory;
 			this.onRent = onRent;
 			this.onReturn = onReturn;

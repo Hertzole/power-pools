@@ -1,34 +1,48 @@
 ﻿#nullable enable
 
 using System;
-using System.Diagnostics;
+#if NET9_0_OR_GREATER
 using System.Threading;
+#endif
 
 namespace Hertzole.PowerPools
 {
 	internal class ConfigurableObjectPool<T> : ObjectPool<T> where T : class, new()
 	{
-		// Do not make this read only! It's a mutable struct.
-		private SpinLock lockObject;
+#if NET9_0_OR_GREATER
+		private readonly Lock lockObject = new Lock();
+#else
+		private readonly object lockObject = new object();
+#endif
 
-		private readonly PooledStack<T> pool = new PooledStack<T>(16);
+		private readonly PooledStack<T> pool = new PooledStack<T>();
 		private readonly Func<T>? factory;
 		private readonly Action<T>? onRent;
 		private readonly Action<T>? onReturn;
 
 		public override int Capacity
 		{
-			get { return pool.Capacity; }
+			get
+			{
+				lock (lockObject)
+				{
+					return pool.Capacity;
+				}
+			}
 		}
 		public override int InPool
 		{
-			get { return pool.Length; }
+			get
+			{
+				lock (lockObject)
+				{
+					return pool.Length;
+				}
+			}
 		}
 
 		public ConfigurableObjectPool(Func<T>? factory = null, Action<T>? onRent = null, Action<T>? onReturn = null)
 		{
-			lockObject = new SpinLock(Debugger.IsAttached);
-
 			this.factory = factory;
 			this.onRent = onRent;
 			this.onReturn = onReturn;
@@ -36,11 +50,8 @@ namespace Hertzole.PowerPools
 
 		public override T Rent()
 		{
-			bool lockTaken = false;
-			try
+			lock (lockObject)
 			{
-				lockObject.Enter(ref lockTaken);
-
 				if (!pool.TryPop(out T? item))
 				{
 					item = CreateItem();
@@ -50,42 +61,22 @@ namespace Hertzole.PowerPools
 				onRent?.Invoke(item);
 				return item;
 			}
-			finally
-			{
-				if (lockTaken)
-				{
-					lockObject.Exit(false);
-				}
-			}
 		}
 
 		public override void Return(T item)
 		{
-			bool lockTaken = false;
-			try
+			lock (lockObject)
 			{
-				lockObject.Enter(ref lockTaken);
-
 				InUse--;
 				onReturn?.Invoke(item);
 				pool.Push(item);
-			}
-			finally
-			{
-				if (lockTaken)
-				{
-					lockObject.Exit(false);
-				}
 			}
 		}
 
 		public override int PreWarm(int count)
 		{
-			bool lockTaken = false;
-			try
+			lock (lockObject)
 			{
-				lockObject.Enter(ref lockTaken);
-
 				// There are already enough items in the pool. No need to do anything.
 				if (pool.Length >= count)
 				{
@@ -101,13 +92,6 @@ namespace Hertzole.PowerPools
 
 				return created;
 			}
-			finally
-			{
-				if (lockTaken)
-				{
-					lockObject.Exit(false);
-				}
-			}
 		}
 
 		private T CreateItem()
@@ -119,8 +103,11 @@ namespace Hertzole.PowerPools
 		{
 			if (disposing)
 			{
-				pool.Dispose();
-				InUse = 0;
+				lock (lockObject)
+				{
+					pool.Dispose();
+					InUse = 0;
+				}
 			}
 		}
 	}

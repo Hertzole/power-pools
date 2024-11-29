@@ -13,6 +13,14 @@ namespace Hertzole.PowerPools
 		{
 			get { return items?.Length ?? 0; }
 		}
+		
+		internal T this[uint index]
+		{
+			get
+			{
+				return items[index];
+			}
+		}
 
 		public PooledStack(int capacity = 16)
 		{

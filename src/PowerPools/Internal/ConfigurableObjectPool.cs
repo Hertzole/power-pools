@@ -17,6 +17,7 @@ namespace Hertzole.PowerPools
 		private readonly Func<T>? factory;
 		private readonly Action<T>? onRent;
 		private readonly Action<T>? onReturn;
+		private readonly Action<T>? onDispose;
 
 		public override int Capacity
 		{
@@ -39,12 +40,13 @@ namespace Hertzole.PowerPools
 			}
 		}
 
-		public ConfigurableObjectPool(int initialCapacity = 16, Func<T>? factory = null, Action<T>? onRent = null, Action<T>? onReturn = null)
+		public ConfigurableObjectPool(int initialCapacity = 16, Func<T>? factory = null, Action<T>? onRent = null, Action<T>? onReturn = null, Action<T>? onDispose = null)
 		{
 			pool = new PooledStack<T>(initialCapacity);
 			this.factory = factory;
 			this.onRent = onRent;
 			this.onReturn = onReturn;
+			this.onDispose = onDispose;
 		}
 
 		public override T Rent()
@@ -104,6 +106,14 @@ namespace Hertzole.PowerPools
 			{
 				lock (lockObject)
 				{
+					if (onDispose != null)
+					{
+						for (uint i = 0; i < InPool; i++)
+						{
+							onDispose(pool[i]);
+						}
+					}
+					
 					pool.Dispose();
 					InUse = 0;
 				}

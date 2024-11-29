@@ -60,10 +60,10 @@ namespace Hertzole.PowerPools
 			get { throw new NotSupportedException("FixedSizeObjectPool does not support a shared instance."); }
 		}
 
-		internal FixedSizeObjectPool(int capacity, Func<T>? factory = null, Action<T>? onRent = null, Action<T>? onReturn = null)
+		private FixedSizeObjectPool(int capacity, Func<T>? factory = null, Action<T>? onRent = null, Action<T>? onReturn = null, Action<T>? onDispose = null)
 		{
 			this.capacity = capacity;
-			internalPool = new ConfigurableObjectPool<T>(capacity, factory, onRent, onReturn);
+			internalPool = new ConfigurableObjectPool<T>(capacity, factory, onRent, onReturn, onDispose);
 		}
 
 		/// <inheritdoc />
@@ -122,10 +122,11 @@ namespace Hertzole.PowerPools
 		/// <param name="factory">Optional factory method to create new items.</param>
 		/// <param name="onRent">Optional action to run when an item is rented.</param>
 		/// <param name="onReturn">Optional action to run when an item is returned.</param>
+		/// <param name="onDispose">Optional action to run on the objects in the pool when the pool is disposed.</param>
 		/// <returns>A new <see cref="FixedSizeObjectPool{T}" /> instance.</returns>
-		public static FixedSizeObjectPool<T> Create(int capacity, Func<T>? factory = null, Action<T>? onRent = null, Action<T>? onReturn = null)
+		public static FixedSizeObjectPool<T> Create(int capacity, Func<T>? factory = null, Action<T>? onRent = null, Action<T>? onReturn = null, Action<T>? onDispose = null)
 		{
-			return new FixedSizeObjectPool<T>(capacity, factory, onRent, onReturn);
+			return new FixedSizeObjectPool<T>(capacity, factory, onRent, onReturn, onDispose);
 		}
 	}
 }

@@ -73,5 +73,25 @@ namespace PowerPools.Tests
 				called = true;
 			}
 		}
+		
+		[Test]
+		public void Dispose_WithDisposeCallback_CallsCallback()
+		{
+			// Arrange
+			bool called = false;
+			ObjectPool<object> newPool = ObjectPool<object>.Create(onDispose: OnDisposed);
+			newPool.PreWarm(16);
+
+			// Act
+			newPool.Dispose();
+
+			// Assert
+			Assert.That(called, Is.True);
+
+			void OnDisposed(object obj)
+			{
+				called = true;
+			}
+		}
 	}
 }

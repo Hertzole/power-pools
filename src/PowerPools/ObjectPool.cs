@@ -66,16 +66,17 @@ namespace Hertzole.PowerPools
 		/// <param name="factory">Optional factory method to create new items.</param>
 		/// <param name="onRent">Optional action to run when an item is rented.</param>
 		/// <param name="onReturn">Optional action to run when an item is returned.</param>
+		/// <param name="onDispose">Optional action to run on the objects in the pool when the pool is disposed.</param>
 		/// <returns>A new <see cref="ObjectPool{T}" /> instance.</returns>
-		public static ObjectPool<T> Create(Func<T>? factory = null, Action<T>? onRent = null, Action<T>? onReturn = null)
+		public static ObjectPool<T> Create(Func<T>? factory = null, Action<T>? onRent = null, Action<T>? onReturn = null, Action<T>? onDispose = null)
 		{
-			return new ConfigurableObjectPool<T>(16, factory, onRent, onReturn);
+			return new ConfigurableObjectPool<T>(16, factory, onRent, onReturn, onDispose);
 		}
 
-		/// <inheritdoc cref="FixedSizeObjectPool{T}.Create(int, Func{T}?, Action{T}?, Action{T}?)" />
-		public static FixedSizeObjectPool<T> CreateFixedSize(int capacity, Func<T>? factory = null, Action<T>? onRent = null, Action<T>? onReturn = null)
+		/// <inheritdoc cref="FixedSizeObjectPool{T}.Create(int, Func{T}?, Action{T}?, Action{T}?, Action{T}?)" />
+		public static FixedSizeObjectPool<T> CreateFixedSize(int capacity, Func<T>? factory = null, Action<T>? onRent = null, Action<T>? onReturn = null, Action<T>? onDispose = null)
 		{
-			return FixedSizeObjectPool<T>.Create(capacity, factory, onRent, onReturn);
+			return FixedSizeObjectPool<T>.Create(capacity, factory, onRent, onReturn, onDispose);
 		}
 
 		/// <summary>

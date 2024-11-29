@@ -131,6 +131,27 @@ namespace PowerPools.Tests
 				called = true;
 			}
 		}
+		
+		[Test]
+		public void Dispose_WithDisposeCallback_CallsCallback()
+		{
+			// Arrange
+			bool called = false;
+			int capacity = GetRandomCapacity();
+			ObjectPool<object> newPool = ObjectPool<object>.CreateFixedSize(capacity, onDispose: OnDisposed);
+			newPool.PreWarm(capacity);
+
+			// Act
+			newPool.Dispose();
+
+			// Assert
+			Assert.That(called, Is.True);
+
+			void OnDisposed(object obj)
+			{
+				called = true;
+			}
+		}
 
 		private int GetRandomCapacity()
 		{

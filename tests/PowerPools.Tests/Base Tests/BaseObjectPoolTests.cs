@@ -9,9 +9,9 @@ namespace PowerPools.Tests
 		protected Random Random { get; } = new Random();
 
 		protected int CurrentCapacity { get; private set; }
-		
+
 		private const int CAPACITY = 69;
-		
+
 		[SetUp]
 		public void SetUp()
 		{
@@ -32,7 +32,7 @@ namespace PowerPools.Tests
 		{
 			// Arrange
 			bool called = false;
-			using var newPool = CreatePool(CurrentCapacity, onRent: OnRented);
+			using TPool newPool = CreatePool(CurrentCapacity, OnRented);
 
 			// Act
 			newPool.Rent();
@@ -51,7 +51,7 @@ namespace PowerPools.Tests
 		{
 			// Arrange
 			bool called = false;
-			using var newPool = CreatePool(CurrentCapacity, onReturn: OnReturned);
+			using TPool newPool = CreatePool(CurrentCapacity, onReturn: OnReturned);
 
 			// Act
 			TItem item = newPool.Rent();
@@ -65,7 +65,7 @@ namespace PowerPools.Tests
 				called = true;
 			}
 		}
-		
+
 		[Test]
 		public void Create_HasZeroInUse()
 		{
@@ -206,13 +206,13 @@ namespace PowerPools.Tests
 			Assert.That(pool.InPool, Is.Zero);
 			Assert.That(pool.Capacity, Is.Zero);
 		}
-		
+
 		[Test]
 		public virtual void Dispose_WithDisposeCallback_CallsCallback()
 		{
 			// Arrange
 			bool called = false;
-			var newPool = CreatePool(CurrentCapacity, onDispose: OnDisposed);
+			TPool newPool = CreatePool(CurrentCapacity, onDispose: OnDisposed);
 			newPool.PreWarm(16);
 
 			// Act

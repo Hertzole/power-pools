@@ -6,7 +6,10 @@ namespace PowerPools.Tests
 	[TestFixture]
 	public class ObjectPoolTests : BaseObjectPoolTests<ObjectPool<object>, object>
 	{
-		protected override ObjectPool<object> CreatePool(int capacity, Action<object>? onRent = null, Action<object>? onReturn = null, Action<object>? onDispose = null)
+		protected override ObjectPool<object> CreatePool(int capacity,
+			Action<object>? onRent = null,
+			Action<object>? onReturn = null,
+			Action<object>? onDispose = null)
 		{
 			return ObjectPool<object>.Create(Factory, onRent, onReturn, onDispose, capacity);
 		}

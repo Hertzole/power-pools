@@ -45,7 +45,7 @@ namespace PowerPools.Tests
 			// Assert
 			Assert.Throws<PoolFullException>(() => Pool.PreWarm(CurrentCapacity + 1));
 		}
-		
+
 		protected int GetRandomCapacity()
 		{
 			return Random.Next(10, 500);

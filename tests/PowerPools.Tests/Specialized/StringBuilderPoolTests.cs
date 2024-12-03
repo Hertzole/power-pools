@@ -7,7 +7,10 @@ namespace PowerPools.Tests
 	[TestFixture]
 	public class StringBuilderPoolTests : BaseObjectPoolWithSharedTests<StringBuilderPool, StringBuilder>
 	{
-		protected override StringBuilderPool CreatePool(int capacity, Action<StringBuilder>? onRent = null, Action<StringBuilder>? onReturn = null, Action<StringBuilder>? onDispose = null)
+		protected override StringBuilderPool CreatePool(int capacity,
+			Action<StringBuilder>? onRent = null,
+			Action<StringBuilder>? onReturn = null,
+			Action<StringBuilder>? onDispose = null)
 		{
 			// Capacity and callbacks are not used in StringBuilderPool.
 			return StringBuilderPool.Create();
@@ -22,12 +25,12 @@ namespace PowerPools.Tests
 		{
 			Assert.Pass("StringBuilderPool does not use callbacks.");
 		}
-		
+
 		public override void Create_WithReturnCallback_CallsCallback()
 		{
 			Assert.Pass("StringBuilderPool does not use callbacks.");
 		}
-		
+
 		[Test]
 		public override void Create_HasCapacity([Values(1, 5, 50, 1000)] int capacity)
 		{

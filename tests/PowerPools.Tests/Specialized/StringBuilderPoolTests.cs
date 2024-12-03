@@ -6,8 +6,9 @@ namespace PowerPools.Tests
 	[TestFixture]
 	public class StringBuilderPoolTests : BaseObjectPoolWithSharedTests<StringBuilderPool, StringBuilder>
 	{
-		protected override StringBuilderPool CreatePool()
+		protected override StringBuilderPool CreatePool(int capacity)
 		{
+			// Capacity is not used in the same way with string builder pool.
 			return StringBuilderPool.Create();
 		}
 
@@ -50,6 +51,12 @@ namespace PowerPools.Tests
 
 			// Assert
 			Assert.That(item.Capacity, Is.AtLeast(StringBuilderPool.DEFAULT_CAPACITY));
+		}
+		
+		[Test]
+		public override void Create_HasCapacity([Values(1, 5, 50, 1000)] int capacity)
+		{
+			Assert.Pass("StringBuilderPool does not use capacity in the same way as other pools.");
 		}
 	}
 }

@@ -8,10 +8,15 @@ namespace PowerPools.Tests
 		protected TPool Pool { get; private set; }
 		protected Random Random { get; } = new Random();
 
+		protected int CurrentCapacity { get; private set; }
+		
+		private const int CAPACITY = 69;
+		
 		[SetUp]
 		public void SetUp()
 		{
-			Pool = CreatePool();
+			CurrentCapacity = CAPACITY;
+			Pool = CreatePool(CAPACITY);
 		}
 
 		[TearDown]
@@ -20,13 +25,13 @@ namespace PowerPools.Tests
 			Pool.Dispose();
 		}
 
-		protected abstract TPool CreatePool();
+		protected abstract TPool CreatePool(int capacity);
 
 		[Test]
 		public void Create_HasZeroInUse()
 		{
 			// Arrange
-			using TPool newPool = CreatePool();
+			using TPool newPool = CreatePool(CAPACITY);
 
 			// Assert
 			Assert.That(newPool.InUse, Is.Zero);
@@ -36,20 +41,20 @@ namespace PowerPools.Tests
 		public void Create_HasZeroInPool()
 		{
 			// Arrange
-			using TPool newPool = CreatePool();
+			using TPool newPool = CreatePool(CAPACITY);
 
 			// Assert
 			Assert.That(newPool.InPool, Is.Zero);
 		}
 
 		[Test]
-		public void Create_HasCapacity()
+		public virtual void Create_HasCapacity([Values(1, 5, 50, 1000)] int capacity)
 		{
 			// Arrange
-			using TPool newPool = CreatePool();
+			using TPool newPool = CreatePool(capacity);
 
 			// Assert
-			Assert.That(newPool.Capacity, Is.AtLeast(1));
+			Assert.That(newPool.Capacity, Is.AtLeast(capacity));
 		}
 
 		[Test]
@@ -152,7 +157,7 @@ namespace PowerPools.Tests
 		public void Dispose_ReturnsPool()
 		{
 			// Arrange
-			TPool pool = CreatePool();
+			TPool pool = CreatePool(CAPACITY);
 
 			// Act
 			pool.Dispose();

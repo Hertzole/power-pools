@@ -5,18 +5,16 @@ namespace PowerPools.Tests
 	[TestFixture]
 	public class FixedObjectPoolTests : BaseObjectPoolTests<FixedSizeObjectPool<object>, object>
 	{
-		private const int CAPACITY = 69;
-
-		protected override FixedSizeObjectPool<object> CreatePool()
+		protected override FixedSizeObjectPool<object> CreatePool(int capacity)
 		{
-			return FixedSizeObjectPool<object>.Create(CAPACITY, Factory);
+			return FixedSizeObjectPool<object>.Create(capacity, Factory);
 		}
 
 		[Test]
 		public void Rent_OverCapacity_ThrowsPoolExhaustedException()
 		{
 			// Arrange
-			for (int i = 0; i < CAPACITY; i++)
+			for (int i = 0; i < CurrentCapacity; i++)
 			{
 				Pool.Rent();
 			}
@@ -29,7 +27,7 @@ namespace PowerPools.Tests
 		public void Return_OverCapacity_ThrowsPoolFullException()
 		{
 			// Arrange
-			Pool.PreWarm(CAPACITY);
+			Pool.PreWarm(CurrentCapacity);
 
 			// Assert
 			Assert.Throws<PoolFullException>(() => Pool.Return(new object()));
@@ -51,7 +49,7 @@ namespace PowerPools.Tests
 		public void PreWarm_OverCapacity_ThrowsPoolFullException()
 		{
 			// Assert
-			Assert.Throws<PoolFullException>(() => Pool.PreWarm(CAPACITY + 1));
+			Assert.Throws<PoolFullException>(() => Pool.PreWarm(CurrentCapacity + 1));
 		}
 
 		[Test]

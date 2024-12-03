@@ -6,9 +6,9 @@ namespace PowerPools.Tests
 	[TestFixture]
 	public class ObjectPoolTests : BaseObjectPoolTests<ObjectPool<object>, object>
 	{
-		protected override ObjectPool<object> CreatePool()
+		protected override ObjectPool<object> CreatePool(int capacity)
 		{
-			return ObjectPool<object>.Create(Factory);
+			return ObjectPool<object>.Create(Factory, initialCapacity: capacity);
 		}
 
 		[Test]

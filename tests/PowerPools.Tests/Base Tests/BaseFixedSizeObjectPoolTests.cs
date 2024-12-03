@@ -1,9 +1,17 @@
-﻿using Hertzole.PowerPools;
+﻿using System;
+using Hertzole.PowerPools;
 
 namespace PowerPools.Tests
 {
 	public abstract class BaseFixedSizeObjectPoolTests<TPool, TItem> : BaseObjectPoolTests<TPool, TItem> where TPool : IObjectPool<TItem> where TItem : class
 	{
+		[Test]
+		public void Create_WithNegativeCapacity_ThrowsArgumentOutOfRangeException([Values(-1, -100, int.MinValue)] int capacity)
+		{
+			// Act & Assert
+			Assert.Throws<ArgumentOutOfRangeException>(() => CreatePool(capacity));
+		}
+
 		[Test]
 		public void Rent_OverCapacity_ThrowsPoolExhaustedException()
 		{

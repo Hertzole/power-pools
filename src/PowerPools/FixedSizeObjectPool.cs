@@ -50,7 +50,8 @@ namespace Hertzole.PowerPools
 		private FixedSizeObjectPool(int capacity, Func<T> factory, Action<T>? onRent = null, Action<T>? onReturn = null, Action<T>? onDispose = null)
 		{
 			ThrowHelper.ThrowIfNull(factory, nameof(factory));
-			
+			ThrowHelper.ThrowIfNegative(capacity, nameof(capacity));
+
 			this.capacity = capacity;
 			internalPool = new ConfigurableObjectPool<T>(factory, onRent, onReturn, onDispose, capacity);
 		}
@@ -110,6 +111,8 @@ namespace Hertzole.PowerPools
 		/// <param name="onReturn">Optional action to run when an item is returned.</param>
 		/// <param name="onDispose">Optional action to run on the objects in the pool when the pool is disposed.</param>
 		/// <returns>A new <see cref="FixedSizeObjectPool{T}" /> instance.</returns>
+		/// <exception cref="ArgumentNullException">If <c>factory</c> is null.</exception>
+		/// <exception cref="ArgumentOutOfRangeException">If <c>capacity</c> is less than 0.</exception>
 		public static FixedSizeObjectPool<T> Create(int capacity,
 			Func<T> factory,
 			Action<T>? onRent = null,

@@ -21,6 +21,16 @@ namespace Hertzole.PowerPools
 
 			ThrowArgumentNullException(paramName);
 		}
+		
+		internal static void ThrowIfNegative(int argument, string paramName)
+		{
+			if (argument >= 0)
+			{
+				return;
+			}
+
+			ThrowArgumentOutOfRangeException(paramName);
+		}
 
 #if NULLABLE_ANNOTATIONS
 		[DoesNotReturn]
@@ -28,6 +38,14 @@ namespace Hertzole.PowerPools
 		private static void ThrowArgumentNullException(string paramName)
 		{
 			throw new ArgumentNullException(paramName);
+		}
+		
+#if NULLABLE_ANNOTATIONS
+		[DoesNotReturn]
+#endif
+		private static void ThrowArgumentOutOfRangeException(string paramName)
+		{
+			throw new ArgumentOutOfRangeException(paramName);
 		}
 	}
 }

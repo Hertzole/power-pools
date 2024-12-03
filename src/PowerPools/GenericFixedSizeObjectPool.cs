@@ -32,6 +32,8 @@ namespace Hertzole.PowerPools
 
 		private GenericFixedSizeObjectPool(int capacity, Action<T>? onRent, Action<T>? onReturn, Action<T>? onDispose)
 		{
+			ThrowHelper.ThrowIfNegative(capacity, nameof(capacity));
+
 			pool = FixedSizeObjectPool<T>.Create(capacity, Factory, onRent, onReturn, onDispose);
 		}
 
@@ -71,6 +73,7 @@ namespace Hertzole.PowerPools
 		/// <param name="onReturn">Optional action to run when an item is returned.</param>
 		/// <param name="onDispose">Optional action to run on the objects in the pool when the pool is disposed.</param>
 		/// <returns>A new instance of <see cref="ObjectPool{T}" />.</returns>
+		/// <exception cref="ArgumentOutOfRangeException">If <c>capacity</c> is less than 0.</exception>
 		public static GenericFixedSizeObjectPool<T> Create(int capacity, Action<T>? onRent = null, Action<T>? onReturn = null, Action<T>? onDispose = null)
 		{
 			return new GenericFixedSizeObjectPool<T>(capacity, onRent, onReturn, onDispose);

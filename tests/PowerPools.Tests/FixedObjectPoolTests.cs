@@ -1,13 +1,14 @@
-﻿using Hertzole.PowerPools;
+﻿using System;
+using Hertzole.PowerPools;
 
 namespace PowerPools.Tests
 {
 	[TestFixture]
 	public class FixedObjectPoolTests : BaseObjectPoolTests<FixedSizeObjectPool<object>, object>
 	{
-		protected override FixedSizeObjectPool<object> CreatePool(int capacity)
+		protected override FixedSizeObjectPool<object> CreatePool(int capacity, Action<object>? onRent = null, Action<object>? onReturn = null, Action<object>? onDispose = null)
 		{
-			return FixedSizeObjectPool<object>.Create(capacity, Factory);
+			return FixedSizeObjectPool<object>.Create(capacity, Factory, onRent, onReturn, onDispose);
 		}
 
 		[Test]
@@ -71,70 +72,6 @@ namespace PowerPools.Tests
 			{
 				called = true;
 				return new object();
-			}
-		}
-
-		[Test]
-		public void Create_WithRentCallback_CallsCallback()
-		{
-			// Arrange
-			bool called = false;
-			int capacity = GetRandomCapacity();
-			using FixedSizeObjectPool<object> newPool = FixedSizeObjectPool<object>.Create(capacity, Factory, OnRented);
-
-			// Act
-			newPool.Rent();
-
-			// Assert
-			Assert.That(called, Is.True);
-			Assert.That(newPool.Capacity, Is.EqualTo(capacity));
-
-			void OnRented(object obj)
-			{
-				called = true;
-			}
-		}
-
-		[Test]
-		public void Create_WithReturnCallback_CallsCallback()
-		{
-			// Arrange
-			bool called = false;
-			int capacity = GetRandomCapacity();
-			using FixedSizeObjectPool<object> newPool = FixedSizeObjectPool<object>.Create(capacity, Factory, onReturn: OnReturned);
-
-			// Act
-			object item = newPool.Rent();
-			newPool.Return(item);
-
-			// Assert
-			Assert.That(called, Is.True);
-			Assert.That(newPool.Capacity, Is.EqualTo(capacity));
-
-			void OnReturned(object obj)
-			{
-				called = true;
-			}
-		}
-
-		[Test]
-		public void Dispose_WithDisposeCallback_CallsCallback()
-		{
-			// Arrange
-			bool called = false;
-			int capacity = GetRandomCapacity();
-			FixedSizeObjectPool<object> newPool = FixedSizeObjectPool<object>.Create(capacity, Factory, onDispose: OnDisposed);
-			newPool.PreWarm(capacity);
-
-			// Act
-			newPool.Dispose();
-
-			// Assert
-			Assert.That(called, Is.True);
-
-			void OnDisposed(object obj)
-			{
-				called = true;
 			}
 		}
 

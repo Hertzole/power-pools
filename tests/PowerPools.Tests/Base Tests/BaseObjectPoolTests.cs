@@ -25,8 +25,47 @@ namespace PowerPools.Tests
 			Pool.Dispose();
 		}
 
-		protected abstract TPool CreatePool(int capacity);
+		protected abstract TPool CreatePool(int capacity, Action<TItem>? onRent = null, Action<TItem>? onReturn = null, Action<TItem>? onDispose = null);
 
+		[Test]
+		public virtual void Create_WithRentCallback_CallsCallback()
+		{
+			// Arrange
+			bool called = false;
+			using var newPool = CreatePool(CurrentCapacity, onRent: OnRented);
+
+			// Act
+			newPool.Rent();
+
+			// Assert
+			Assert.That(called, Is.True);
+
+			void OnRented(TItem obj)
+			{
+				called = true;
+			}
+		}
+
+		[Test]
+		public virtual void Create_WithReturnCallback_CallsCallback()
+		{
+			// Arrange
+			bool called = false;
+			using var newPool = CreatePool(CurrentCapacity, onReturn: OnReturned);
+
+			// Act
+			TItem item = newPool.Rent();
+			newPool.Return(item);
+
+			// Assert
+			Assert.That(called, Is.True);
+
+			void OnReturned(TItem obj)
+			{
+				called = true;
+			}
+		}
+		
 		[Test]
 		public void Create_HasZeroInUse()
 		{
@@ -166,6 +205,26 @@ namespace PowerPools.Tests
 			Assert.That(pool.InUse, Is.Zero);
 			Assert.That(pool.InPool, Is.Zero);
 			Assert.That(pool.Capacity, Is.Zero);
+		}
+		
+		[Test]
+		public virtual void Dispose_WithDisposeCallback_CallsCallback()
+		{
+			// Arrange
+			bool called = false;
+			var newPool = CreatePool(CurrentCapacity, onDispose: OnDisposed);
+			newPool.PreWarm(16);
+
+			// Act
+			newPool.Dispose();
+
+			// Assert
+			Assert.That(called, Is.True);
+
+			void OnDisposed(TItem obj)
+			{
+				called = true;
+			}
 		}
 	}
 }

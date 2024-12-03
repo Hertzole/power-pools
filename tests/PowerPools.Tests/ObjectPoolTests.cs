@@ -6,9 +6,9 @@ namespace PowerPools.Tests
 	[TestFixture]
 	public class ObjectPoolTests : BaseObjectPoolTests<ObjectPool<object>, object>
 	{
-		protected override ObjectPool<object> CreatePool(int capacity)
+		protected override ObjectPool<object> CreatePool(int capacity, Action<object>? onRent = null, Action<object>? onReturn = null, Action<object>? onDispose = null)
 		{
-			return ObjectPool<object>.Create(Factory, initialCapacity: capacity);
+			return ObjectPool<object>.Create(Factory, onRent, onReturn, onDispose, capacity);
 		}
 
 		[Test]
@@ -35,65 +35,6 @@ namespace PowerPools.Tests
 			{
 				called = true;
 				return new object();
-			}
-		}
-
-		[Test]
-		public void Create_WithRentCallback_CallsCallback()
-		{
-			// Arrange
-			bool called = false;
-			using ObjectPool<object> newPool = ObjectPool<object>.Create(Factory, OnRented);
-
-			// Act
-			newPool.Rent();
-
-			// Assert
-			Assert.That(called, Is.True);
-
-			void OnRented(object obj)
-			{
-				called = true;
-			}
-		}
-
-		[Test]
-		public void Create_WithReturnCallback_CallsCallback()
-		{
-			// Arrange
-			bool called = false;
-			using ObjectPool<object> newPool = ObjectPool<object>.Create(Factory, onReturn: OnReturned);
-
-			// Act
-			object item = newPool.Rent();
-			newPool.Return(item);
-
-			// Assert
-			Assert.That(called, Is.True);
-
-			void OnReturned(object obj)
-			{
-				called = true;
-			}
-		}
-
-		[Test]
-		public void Dispose_WithDisposeCallback_CallsCallback()
-		{
-			// Arrange
-			bool called = false;
-			ObjectPool<object> newPool = ObjectPool<object>.Create(Factory, onDispose: OnDisposed);
-			newPool.PreWarm(16);
-
-			// Act
-			newPool.Dispose();
-
-			// Assert
-			Assert.That(called, Is.True);
-
-			void OnDisposed(object obj)
-			{
-				called = true;
 			}
 		}
 

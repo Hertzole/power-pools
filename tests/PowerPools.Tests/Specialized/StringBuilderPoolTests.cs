@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using Hertzole.PowerPools;
 
 namespace PowerPools.Tests
@@ -6,15 +7,31 @@ namespace PowerPools.Tests
 	[TestFixture]
 	public class StringBuilderPoolTests : BaseObjectPoolWithSharedTests<StringBuilderPool, StringBuilder>
 	{
-		protected override StringBuilderPool CreatePool(int capacity)
+		protected override StringBuilderPool CreatePool(int capacity, Action<StringBuilder>? onRent = null, Action<StringBuilder>? onReturn = null, Action<StringBuilder>? onDispose = null)
 		{
-			// Capacity is not used in the same way with string builder pool.
+			// Capacity and callbacks are not used in StringBuilderPool.
 			return StringBuilderPool.Create();
 		}
 
 		protected override IObjectPool<StringBuilder> GetShared()
 		{
 			return StringBuilderPool.Shared;
+		}
+
+		public override void Create_WithRentCallback_CallsCallback()
+		{
+			Assert.Pass("StringBuilderPool does not use callbacks.");
+		}
+		
+		public override void Create_WithReturnCallback_CallsCallback()
+		{
+			Assert.Pass("StringBuilderPool does not use callbacks.");
+		}
+		
+		[Test]
+		public override void Create_HasCapacity([Values(1, 5, 50, 1000)] int capacity)
+		{
+			Assert.Pass("StringBuilderPool does not use capacity in the same way as other pools.");
 		}
 
 		[Test]
@@ -52,11 +69,10 @@ namespace PowerPools.Tests
 			// Assert
 			Assert.That(item.Capacity, Is.AtLeast(StringBuilderPool.DEFAULT_CAPACITY));
 		}
-		
-		[Test]
-		public override void Create_HasCapacity([Values(1, 5, 50, 1000)] int capacity)
+
+		public override void Dispose_WithDisposeCallback_CallsCallback()
 		{
-			Assert.Pass("StringBuilderPool does not use capacity in the same way as other pools.");
+			Assert.Pass("StringBuilderPool does not use callbacks.");
 		}
 	}
 }

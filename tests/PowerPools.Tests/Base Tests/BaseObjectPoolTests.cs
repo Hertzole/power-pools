@@ -3,9 +3,9 @@ using Hertzole.PowerPools;
 
 namespace PowerPools.Tests
 {
-	public abstract class BaseObjectPoolTests<TPool, TItem> where TPool : ObjectPool<TItem> where TItem : class, new()
+	public abstract class BaseObjectPoolTests<TPool, TItem> where TPool : IObjectPool<TItem> where TItem : class
 	{
-		protected TPool Pool { get; private set; } = null!;
+		protected TPool Pool { get; private set; }
 		protected Random Random { get; } = new Random();
 
 		[SetUp]

@@ -9,17 +9,17 @@ using System;
 
 namespace Hertzole.PowerPools
 {
-	internal class ConfigurableObjectPool<T> : ObjectPool<T> where T : class, new()
+	internal sealed class ConfigurableObjectPool<T> : IObjectPool<T> where T : class
 	{
 		private readonly Lock lockObject = new Lock();
 
 		private readonly PooledStack<T> pool;
-		private readonly Func<T>? factory;
+		private readonly Func<T> factory;
 		private readonly Action<T>? onRent;
 		private readonly Action<T>? onReturn;
 		private readonly Action<T>? onDispose;
 
-		public override int Capacity
+		public int Capacity
 		{
 			get
 			{
@@ -29,7 +29,7 @@ namespace Hertzole.PowerPools
 				}
 			}
 		}
-		public override int InPool
+		public int InPool
 		{
 			get
 			{
@@ -40,7 +40,13 @@ namespace Hertzole.PowerPools
 			}
 		}
 
-		public ConfigurableObjectPool(int initialCapacity = 16, Func<T>? factory = null, Action<T>? onRent = null, Action<T>? onReturn = null, Action<T>? onDispose = null)
+		public int InUse { get; private set; }
+
+		internal ConfigurableObjectPool(Func<T> factory,
+			Action<T>? onRent = null,
+			Action<T>? onReturn = null,
+			Action<T>? onDispose = null,
+			int initialCapacity = 16)
 		{
 			pool = new PooledStack<T>(initialCapacity);
 			this.factory = factory;
@@ -49,7 +55,7 @@ namespace Hertzole.PowerPools
 			this.onDispose = onDispose;
 		}
 
-		public override T Rent()
+		public T Rent()
 		{
 			lock (lockObject)
 			{
@@ -64,7 +70,7 @@ namespace Hertzole.PowerPools
 			}
 		}
 
-		public override void Return(T item)
+		public void Return(T item)
 		{
 			lock (lockObject)
 			{
@@ -74,7 +80,7 @@ namespace Hertzole.PowerPools
 			}
 		}
 
-		public override int PreWarm(int count)
+		public int PreWarm(int count)
 		{
 			lock (lockObject)
 			{
@@ -97,26 +103,23 @@ namespace Hertzole.PowerPools
 
 		private T CreateItem()
 		{
-			return factory != null ? factory() : new T();
+			return factory();
 		}
 
-		protected override void Dispose(bool disposing)
+		public void Dispose()
 		{
-			if (disposing)
+			lock (lockObject)
 			{
-				lock (lockObject)
+				if (onDispose != null)
 				{
-					if (onDispose != null)
+					for (uint i = 0; i < InPool; i++)
 					{
-						for (uint i = 0; i < InPool; i++)
-						{
-							onDispose(pool[i]);
-						}
+						onDispose(pool[i]);
 					}
-					
-					pool.Dispose();
-					InUse = 0;
 				}
+
+				pool.Dispose();
+				InUse = 0;
 			}
 		}
 	}

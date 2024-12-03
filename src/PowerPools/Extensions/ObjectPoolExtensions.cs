@@ -17,7 +17,7 @@
 		/// <param name="item">The item that was rented.</param>
 		/// <typeparam name="T">The type of object to rent.</typeparam>
 		/// <returns>A new <see cref="PoolScope{T}" /> instance that needs to be disposed when the caller is done with the item.</returns>
-		public static PoolScope<T> Rent<T>(this ObjectPool<T> pool, out T item) where T : class, new()
+		public static PoolScope<T> Rent<T>(this IObjectPool<T> pool, out T item) where T : class
 		{
 			item = pool.Rent();
 			return new PoolScope<T>(pool, item);

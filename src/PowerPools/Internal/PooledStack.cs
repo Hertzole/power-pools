@@ -13,14 +13,6 @@ namespace Hertzole.PowerPools
 		{
 			get { return items?.Length ?? 0; }
 		}
-		
-		internal T this[uint index]
-		{
-			get
-			{
-				return items[index];
-			}
-		}
 
 		public PooledStack(int capacity = 16)
 		{
@@ -28,6 +20,11 @@ namespace Hertzole.PowerPools
 
 			items = ArrayPool<T>.Shared.Rent(capacity);
 			Length = 0;
+		}
+
+		internal T this[uint index]
+		{
+			get { return items[index]; }
 		}
 
 		public void Push(T item)

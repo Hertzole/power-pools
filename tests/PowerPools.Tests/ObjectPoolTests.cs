@@ -1,18 +1,21 @@
-﻿using Hertzole.PowerPools;
+﻿using System;
+using Hertzole.PowerPools;
 
 namespace PowerPools.Tests
 {
 	[TestFixture]
-	public class ObjectPoolTests : BaseObjectPoolWithSharedTests<ObjectPool<object>, object>
+	public class ObjectPoolTests : BaseObjectPoolTests<ObjectPool<object>, object>
 	{
 		protected override ObjectPool<object> CreatePool()
 		{
-			return ObjectPool<object>.Create();
+			return ObjectPool<object>.Create(Factory);
 		}
 
-		protected override ObjectPool<object> GetShared()
+		[Test]
+		public void Create_WithNullFactory_ThrowsArgumentNullException()
 		{
-			return ObjectPool<object>.Shared;
+			// Act & Assert
+			Assert.Throws<ArgumentNullException>(() => ObjectPool<object>.Create(null!));
 		}
 
 		[Test]
@@ -20,7 +23,7 @@ namespace PowerPools.Tests
 		{
 			// Arrange
 			bool called = false;
-			using ObjectPool<object> newPool = ObjectPool<object>.Create(Factory);
+			using ObjectPool<object> newPool = ObjectPool<object>.Create(LocalFactory);
 
 			// Act
 			newPool.Rent();
@@ -28,7 +31,7 @@ namespace PowerPools.Tests
 			// Assert
 			Assert.That(called, Is.True);
 
-			object Factory()
+			object LocalFactory()
 			{
 				called = true;
 				return new object();
@@ -40,7 +43,7 @@ namespace PowerPools.Tests
 		{
 			// Arrange
 			bool called = false;
-			using ObjectPool<object> newPool = ObjectPool<object>.Create(onRent: OnRented);
+			using ObjectPool<object> newPool = ObjectPool<object>.Create(Factory, OnRented);
 
 			// Act
 			newPool.Rent();
@@ -59,7 +62,7 @@ namespace PowerPools.Tests
 		{
 			// Arrange
 			bool called = false;
-			using ObjectPool<object> newPool = ObjectPool<object>.Create(onReturn: OnReturned);
+			using ObjectPool<object> newPool = ObjectPool<object>.Create(Factory, onReturn: OnReturned);
 
 			// Act
 			object item = newPool.Rent();
@@ -73,13 +76,13 @@ namespace PowerPools.Tests
 				called = true;
 			}
 		}
-		
+
 		[Test]
 		public void Dispose_WithDisposeCallback_CallsCallback()
 		{
 			// Arrange
 			bool called = false;
-			ObjectPool<object> newPool = ObjectPool<object>.Create(onDispose: OnDisposed);
+			ObjectPool<object> newPool = ObjectPool<object>.Create(Factory, onDispose: OnDisposed);
 			newPool.PreWarm(16);
 
 			// Act
@@ -92,6 +95,11 @@ namespace PowerPools.Tests
 			{
 				called = true;
 			}
+		}
+
+		private static object Factory()
+		{
+			return new object();
 		}
 	}
 }

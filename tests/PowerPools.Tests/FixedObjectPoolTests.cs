@@ -1,5 +1,4 @@
-﻿using System;
-using Hertzole.PowerPools;
+﻿using Hertzole.PowerPools;
 
 namespace PowerPools.Tests
 {
@@ -10,7 +9,7 @@ namespace PowerPools.Tests
 
 		protected override FixedSizeObjectPool<object> CreatePool()
 		{
-			return FixedSizeObjectPool<object>.Create(CAPACITY);
+			return FixedSizeObjectPool<object>.Create(CAPACITY, Factory);
 		}
 
 		[Test]
@@ -40,7 +39,7 @@ namespace PowerPools.Tests
 		public override void PreWarm_PreWarms([Values(1, 5, 10, 100)] int amount)
 		{
 			// Arrange
-			using FixedSizeObjectPool<object> pool = FixedSizeObjectPool<object>.Create(150);
+			using FixedSizeObjectPool<object> pool = FixedSizeObjectPool<object>.Create(150, Factory);
 			pool.PreWarm(amount);
 
 			// Assert
@@ -56,24 +55,12 @@ namespace PowerPools.Tests
 		}
 
 		[Test]
-		public void GetShared_ThrowsNotSupportedException()
-		{
-			// Assert
-			Assert.Throws<NotSupportedException>(() =>
-			{
-#pragma warning disable CS0618 // Type or member is obsolete
-				_ = FixedSizeObjectPool<object>.Shared;
-#pragma warning restore CS0618 // Type or member is obsolete
-			});
-		}
-
-		[Test]
 		public void Create_WithFactory_CallsFactory()
 		{
 			// Arrange
 			bool called = false;
 			int capacity = GetRandomCapacity();
-			using FixedSizeObjectPool<object> newPool = ObjectPool<object>.CreateFixedSize(capacity, Factory);
+			using FixedSizeObjectPool<object> newPool = FixedSizeObjectPool<object>.Create(capacity, LocalFactory);
 
 			// Act
 			newPool.Rent();
@@ -82,7 +69,7 @@ namespace PowerPools.Tests
 			Assert.That(called, Is.True);
 			Assert.That(newPool.Capacity, Is.EqualTo(capacity));
 
-			object Factory()
+			object LocalFactory()
 			{
 				called = true;
 				return new object();
@@ -95,7 +82,7 @@ namespace PowerPools.Tests
 			// Arrange
 			bool called = false;
 			int capacity = GetRandomCapacity();
-			using ObjectPool<object> newPool = ObjectPool<object>.CreateFixedSize(capacity, onRent: OnRented);
+			using FixedSizeObjectPool<object> newPool = FixedSizeObjectPool<object>.Create(capacity, Factory, OnRented);
 
 			// Act
 			newPool.Rent();
@@ -116,7 +103,7 @@ namespace PowerPools.Tests
 			// Arrange
 			bool called = false;
 			int capacity = GetRandomCapacity();
-			using ObjectPool<object> newPool = ObjectPool<object>.CreateFixedSize(capacity, onReturn: OnReturned);
+			using FixedSizeObjectPool<object> newPool = FixedSizeObjectPool<object>.Create(capacity, Factory, onReturn: OnReturned);
 
 			// Act
 			object item = newPool.Rent();
@@ -131,14 +118,14 @@ namespace PowerPools.Tests
 				called = true;
 			}
 		}
-		
+
 		[Test]
 		public void Dispose_WithDisposeCallback_CallsCallback()
 		{
 			// Arrange
 			bool called = false;
 			int capacity = GetRandomCapacity();
-			ObjectPool<object> newPool = ObjectPool<object>.CreateFixedSize(capacity, onDispose: OnDisposed);
+			FixedSizeObjectPool<object> newPool = FixedSizeObjectPool<object>.Create(capacity, Factory, onDispose: OnDisposed);
 			newPool.PreWarm(capacity);
 
 			// Act
@@ -156,6 +143,11 @@ namespace PowerPools.Tests
 		private int GetRandomCapacity()
 		{
 			return Random.Next(10, 500);
+		}
+
+		private static object Factory()
+		{
+			return new object();
 		}
 	}
 }

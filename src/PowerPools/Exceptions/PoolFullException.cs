@@ -12,7 +12,7 @@
 		///     Initializes a new instance of the <see cref="PoolFullException" /> class.
 		/// </summary>
 		internal PoolFullException() : base(message) { }
-		
+
 		internal PoolFullException(string message) : base(message) { }
 	}
 }

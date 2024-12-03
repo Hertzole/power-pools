@@ -2,19 +2,20 @@
 
 namespace PowerPools.Tests
 {
-	public abstract class BaseObjectPoolWithSharedTests<TPool, TItem> : BaseObjectPoolTests<TPool, TItem> where TPool : ObjectPool<TItem> where TItem : class, new()
+	public abstract class BaseObjectPoolWithSharedTests<TPool, TItem> : BaseObjectPoolTests<TPool, TItem> where TPool : IObjectPool<TItem> where TItem : class
 	{
-		protected abstract ObjectPool<TItem> GetShared();
+		protected abstract IObjectPool<TItem> GetShared();
 
 		[Test]
 		public void Shared_IsShared()
 		{
 			// Arrange
-			ObjectPool<object> shared = ObjectPool<object>.Shared;
+			IObjectPool<TItem> shared = GetShared();
 
 			// Assert
-			Assert.That(shared, Is.SameAs(ObjectPool<object>.Shared));
-			Assert.That(shared, Is.TypeOf<SharedObjectPool<object>>());
+			Assert.That(shared, Is.Not.Null);
+			Assert.That(shared, Is.SameAs(GetShared()));
+			Assert.That(shared, Is.InstanceOf<IObjectPool<TItem>>());
 		}
 	}
 }

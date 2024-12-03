@@ -11,9 +11,22 @@ namespace PowerPools.Tests
 			return StringBuilderPool.Create();
 		}
 
-		protected override ObjectPool<StringBuilder> GetShared()
+		protected override IObjectPool<StringBuilder> GetShared()
 		{
 			return StringBuilderPool.Shared;
+		}
+
+		[Test]
+		public void Create_HasDefaultCapacity()
+		{
+			// Arrange
+			using StringBuilderPool pool = StringBuilderPool.Create();
+
+			// Act
+			StringBuilder item = pool.Rent();
+
+			// Assert
+			Assert.That(item.Capacity, Is.AtLeast(StringBuilderPool.DEFAULT_CAPACITY));
 		}
 
 		[Test]

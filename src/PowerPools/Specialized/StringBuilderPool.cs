@@ -1,12 +1,14 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace Hertzole.PowerPools
 {
 	/// <summary>
-	///     Provides a resource pool for <see cref="StringBuilder" /> instances using <see cref="ObjectPool{T}" />.
+	///     Provides a resource pool for <see cref="StringBuilder" /> instances using <see cref="ObjectPool{T}" />. It will
+	///     automatically clear the <see cref="StringBuilder" /> when it's returned to the pool.
 	/// </summary>
 	/// <remarks>This class is thread-safe. All members may be used by multiple threads concurrently.</remarks>
-	public sealed class StringBuilderPool : ObjectPool<StringBuilder>
+	public sealed class StringBuilderPool : IObjectPool<StringBuilder>
 	{
 		private readonly int defaultCapacity;
 		private readonly ObjectPool<StringBuilder> pool;
@@ -14,58 +16,61 @@ namespace Hertzole.PowerPools
 		/// <summary>
 		///     Retrieves a shared <see cref="StringBuilderPool" /> instance.
 		/// </summary>
-		public new static ObjectPool<StringBuilder> Shared { get; } = new SharedObjectPool<StringBuilder>(OnCreateStatic, null, OnReturn);
+		public static StringBuilderPool Shared { get; } = new StringBuilderPool(OnCreateStatic);
 
 		/// <inheritdoc />
-		public override int Capacity
+		public int Capacity
 		{
 			get { return pool.Capacity; }
 		}
 		/// <inheritdoc />
-		public override int InPool
+		public int InPool
 		{
 			get { return pool.InPool; }
 		}
 
 		/// <inheritdoc />
-		public override int InUse
+		public int InUse
 		{
 			get { return pool.InUse; }
+		}
+
+		private StringBuilderPool(Func<StringBuilder> factory)
+		{
+			// For whatever reason I can't use the OnReturn method here without code coverage creating a new inaccessible branch.
+			pool = ObjectPool<StringBuilder>.Create(factory, onReturn: static sb => sb.Clear());
 		}
 
 		private StringBuilderPool(int defaultCapacity = DEFAULT_CAPACITY)
 		{
 			this.defaultCapacity = defaultCapacity;
-			pool = Create(OnCreate, null, OnReturn);
+			pool = ObjectPool<StringBuilder>.Create(OnCreate, null, OnReturn);
 		}
 
 		internal const int DEFAULT_CAPACITY = 256;
 
 		/// <inheritdoc />
-		public override StringBuilder Rent()
+		public StringBuilder Rent()
 		{
 			return pool.Rent();
 		}
 
 		/// <inheritdoc />
-		public override void Return(StringBuilder item)
+		public void Return(StringBuilder item)
 		{
 			pool.Return(item);
 		}
 
 		/// <inheritdoc />
-		public override int PreWarm(int count)
+		public int PreWarm(int count)
 		{
 			return pool.PreWarm(count);
 		}
 
 		/// <inheritdoc />
-		protected override void Dispose(bool disposing)
+		public void Dispose()
 		{
-			if (disposing)
-			{
-				pool.Dispose();
-			}
+			pool.Dispose();
 		}
 
 		private StringBuilder OnCreate()
@@ -86,6 +91,7 @@ namespace Hertzole.PowerPools
 		/// <summary>
 		///     Creates a new instance of <see cref="StringBuilderPool" /> using the default options.
 		/// </summary>
+		/// <param name="defaultCapacity">The default capacity of the <see cref="StringBuilder" /> instances.</param>
 		/// <returns>A new <see cref="StringBuilderPool" /> instance.</returns>
 		public static StringBuilderPool Create(int defaultCapacity = 256)
 		{

@@ -10,7 +10,7 @@ namespace PowerPools.Tests
 		[SetUp]
 		public void SetUp()
 		{
-			stack = new PooledStack<object>(16);
+			stack = new PooledStack<object>();
 		}
 
 		[TearDown]
@@ -53,7 +53,7 @@ namespace PowerPools.Tests
 			Assert.That(newStack.Length, Is.Zero);
 			Assert.That(newStack.items, Is.Null);
 		}
-		
+
 		[Test]
 		public void Push_StackHasItem()
 		{
@@ -67,7 +67,7 @@ namespace PowerPools.Tests
 			Assert.That(stack.Length, Is.EqualTo(1));
 			Assert.That(stack.items[0], Is.EqualTo(item));
 		}
-		
+
 		[Test]
 		public void Push_StackGrows()
 		{
@@ -84,7 +84,7 @@ namespace PowerPools.Tests
 			Assert.That(stack.Length, Is.EqualTo(20));
 			Assert.That(stack.Capacity, Is.AtLeast(20));
 		}
-		
+
 		[Test]
 		public void TryPop_StackIsEmpty_ReturnsFalse()
 		{
@@ -105,7 +105,7 @@ namespace PowerPools.Tests
 
 			// Act
 			bool result = stack.TryPop(out object resultItem);
-			
+
 			// Assert
 			Assert.That(result, Is.True);
 			Assert.That(resultItem, Is.EqualTo(item));

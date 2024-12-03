@@ -7,12 +7,12 @@ namespace Hertzole.PowerPools
 	///     the scope is disposed.
 	/// </summary>
 	/// <typeparam name="T">The type of object to rent.</typeparam>
-	public readonly struct PoolScope<T> : IDisposable where T : class, new()
+	public readonly struct PoolScope<T> : IDisposable where T : class
 	{
-		private readonly ObjectPool<T> pool;
+		private readonly IObjectPool<T> pool;
 		private readonly T item;
 
-		internal PoolScope(ObjectPool<T> pool, T item)
+		internal PoolScope(IObjectPool<T> pool, T item)
 		{
 			this.pool = pool;
 			this.item = item;

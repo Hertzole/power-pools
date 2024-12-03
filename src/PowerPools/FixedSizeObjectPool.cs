@@ -49,6 +49,8 @@ namespace Hertzole.PowerPools
 
 		private FixedSizeObjectPool(int capacity, Func<T> factory, Action<T>? onRent = null, Action<T>? onReturn = null, Action<T>? onDispose = null)
 		{
+			ThrowHelper.ThrowIfNull(factory, nameof(factory));
+			
 			this.capacity = capacity;
 			internalPool = new ConfigurableObjectPool<T>(factory, onRent, onReturn, onDispose, capacity);
 		}

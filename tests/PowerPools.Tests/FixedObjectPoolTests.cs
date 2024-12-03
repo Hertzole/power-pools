@@ -13,6 +13,13 @@ namespace PowerPools.Tests
 		{
 			return FixedSizeObjectPool<object>.Create(capacity, Factory, onRent, onReturn, onDispose);
 		}
+		
+		[Test]
+		public void Create_WithNullFactory_ThrowsArgumentNullException()
+		{
+			// Act & Assert
+			Assert.Throws<ArgumentNullException>(() => FixedSizeObjectPool<object>.Create(16, null!));
+		}
 
 		[Test]
 		public void Create_WithFactory_CallsFactory()

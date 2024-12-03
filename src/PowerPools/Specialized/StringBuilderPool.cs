@@ -11,7 +11,7 @@ namespace Hertzole.PowerPools
 	public sealed class StringBuilderPool : IObjectPool<StringBuilder>
 	{
 		private readonly int defaultCapacity;
-		private readonly ObjectPool<StringBuilder> pool;
+		private readonly ConfigurableObjectPool<StringBuilder> pool;
 
 		/// <summary>
 		///     Retrieves a shared <see cref="StringBuilderPool" /> instance.
@@ -38,13 +38,13 @@ namespace Hertzole.PowerPools
 		private StringBuilderPool(Func<StringBuilder> factory)
 		{
 			// For whatever reason I can't use the OnReturn method here without code coverage creating a new inaccessible branch.
-			pool = ObjectPool<StringBuilder>.Create(factory, onReturn: static sb => sb.Clear());
+			pool = new ConfigurableObjectPool<StringBuilder>(factory, onReturn: static sb => sb.Clear());
 		}
 
 		private StringBuilderPool(int defaultCapacity = DEFAULT_CAPACITY)
 		{
 			this.defaultCapacity = defaultCapacity;
-			pool = ObjectPool<StringBuilder>.Create(OnCreate, null, OnReturn);
+			pool = new ConfigurableObjectPool<StringBuilder>(OnCreate, onReturn: OnReturn);
 		}
 
 		internal const int DEFAULT_CAPACITY = 256;

@@ -1,0 +1,54 @@
+name: Release workflow
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9
+
+      - name: Build
+        run: |
+          dotnet restore
+          dotnet build -c Release
+
+      - name: Test
+        run: dotnet test
+
+      - name: Release
+        id: semantic
+        uses: cycjimmy/semantic-release-action@v4
+        with:
+          branch: master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pack
+        if: steps.semantic.outputs.new_release_published == 'true'
+        run: dotnet pack -c Release -o output -p:PackageVersion=${{ steps.semantic.outputs.new_release_version }} -p:AssemblyVersion=${{ steps.semantic.outputs.new_release_version }}
+
+      - name: Add Nuget Source
+        if: steps.semantic.outputs.new_release_published == 'true'
+        run: dotnet nuget add source https://nuget.pkg.github.com/OWNER/index.json --name github --username OWNER --password ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to GitHub packages
+        if: steps.semantic.outputs.new_release_published == 'true'
+        run: dotnet nuget push output/*.nupkg --skip-duplicate --api-key ${{ secrets.GITHUB_TOKEN }} --source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
+
+      - name: Publish to NuGet
+        if: steps.semantic.outputs.new_release_published == 'true'
+        run: dotnet nuget push output/*.nupkg --skip-duplicate --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json

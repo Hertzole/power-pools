@@ -45,12 +45,7 @@
     <ItemGroup>
         <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
         <None Include="..\..\LICENSE" Pack="true" PackagePath="\"/>
-<!--        <None Include="bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml" Pack="true" PackagePath="\"/>-->
     </ItemGroup>
-
-    <Target Name="LogXmlPath" AfterTargets="Build">
-        <Message Text="Generated XML Path: bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml" Importance="High" />
-    </Target>
 
     <PropertyGroup>
         <IsTrimmable>true</IsTrimmable>

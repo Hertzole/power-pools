@@ -34,6 +34,9 @@ jobs:
       - name: Test
         run: dotnet test
 
+      - name: Add NuGet Source
+        run: dotnet nuget add source --username ${{ github.repository_owner }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+
       - name: Release
         id: semantic
         uses: cycjimmy/semantic-release-action@v4
@@ -45,10 +48,6 @@ jobs:
       - name: Pack
         if: steps.semantic.outputs.new_release_published == 'true'
         run: dotnet pack -c Release -o output -p:PackageVersion=${{ steps.semantic.outputs.new_release_version }} -p:AssemblyVersion=${{ steps.semantic.outputs.new_release_version }}
-
-      - name: Add Nuget Source
-        if: steps.semantic.outputs.new_release_published == 'true'
-        run: dotnet nuget add source https://nuget.pkg.github.com/OWNER/index.json --name github --username OWNER --password ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to GitHub packages
         if: steps.semantic.outputs.new_release_published == 'true'

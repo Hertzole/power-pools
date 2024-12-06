@@ -5,6 +5,7 @@
         <Nullable>disable</Nullable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <TargetFrameworks>net5.0;net6.0;net7.0;net8.0;net9.0;netstandard2.0;netstandard2.1</TargetFrameworks>
+        <IsPackable>true</IsPackable>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -21,7 +22,6 @@
 
     <PropertyGroup>
         <AssemblyName>Hertzole.PowerPools</AssemblyName>
-        <AssemblyVersion>1.0.0</AssemblyVersion>
         <RootNamespace>Hertzole.PowerPools</RootNamespace>
     </PropertyGroup>
 
@@ -29,16 +29,33 @@
         <PackageId>Hertzole.PowerPools</PackageId>
         <Title>PowerPools</Title>
         <Authors>Hertzole</Authors>
+        <Description>Powerful, simple, and performant object pools for C# </Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RepositoryType>git</RepositoryType>
+        <PackageProjectUrl>https://github.com/Hertzole/power-pools</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/Hertzole/power-pools</RepositoryUrl>
+        <PackageTags>Scope,Performance,Pool,Pooling,Power,Pools</PackageTags>
     </PropertyGroup>
+    
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+        <None Include="..\..\LICENSE" Pack="true" PackagePath="\"/>
+<!--        <None Include="bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml" Pack="true" PackagePath="\"/>-->
+    </ItemGroup>
+
+    <Target Name="LogXmlPath" AfterTargets="Build">
+        <Message Text="Generated XML Path: bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml" Importance="High" />
+    </Target>
 
     <PropertyGroup>
         <IsTrimmable>true</IsTrimmable>
         <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
         <IsAotCompatible>true</IsAotCompatible>
-    </PropertyGroup>
-
-    <PropertyGroup>
-        <IsPackable>true</IsPackable>
     </PropertyGroup>
 
 </Project>
